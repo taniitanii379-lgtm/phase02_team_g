@@ -16,8 +16,16 @@ class QuizFactory extends Factory
      */
     public function definition(): array
     {
+ $choices = [
+            $this->faker->words(2, true),
+            $this->faker->words(2, true),
+            $this->faker->words(2, true),
+            $this->faker->words(2, true),
+        ];
         return [
-            //
+            'question' => $this->faker->sentence(6, true),
+            'choices' => $choices,
+            'answer' => $this->faker->numberBetween(0, count($choices) - 1),
         ];
     }
 }
