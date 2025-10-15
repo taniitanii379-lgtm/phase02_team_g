@@ -28,6 +28,10 @@ Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // スコア
     Route::get('/scores', [ScoreController::class, 'index'])->name('scores.index');
+    //スコア履歴表示
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/scores', [ScoreController::class, 'index'])->name('scores.index');
+   });
 
     // プロフィール
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
