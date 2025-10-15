@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>quizzes.create</title>
-</head>
-<body>
-    <h1>View: quizzes.create</h1>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">クイズ作成</h2>
+    </x-slot>
 
-    <div>
-        <!-- Because you are alive, everything is possible. - Thich Nhat Hanh -->
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                クイズ作成画面の内容
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</x-app-layout>
+

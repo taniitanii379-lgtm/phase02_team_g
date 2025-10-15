@@ -12,8 +12,8 @@ class QuizController extends Controller
      */
     public function index()
     {
-    $quizzes = Quiz::all();
-    return view('quizzes.index', compact('quizzes'));
+        $quizzes = Quiz::all();
+        return view('quizzes.index', compact('quizzes'));
     }
 
     /**
@@ -21,7 +21,7 @@ class QuizController extends Controller
      */
     public function create()
     {
-    return view('quizzes.create');
+        return view('quizzes.create');
     }
 
     /**
@@ -30,18 +30,18 @@ class QuizController extends Controller
     public function store(Request $request)
     {
          $request->validate([
-        'question' => 'required|string',
-        'choices' => 'required|array|min:2',
-        'answer' => 'required|integer',
-    ]);
+            'question' => 'required|string',
+            'choices' => 'required|array|min:2',
+            'answer' => 'required|integer',
+        ]);
 
-    Quiz::create([
-        'question' => $request->question,
-        'choices' => json_encode($request->choices),
-        'answer' => $request->answer,
-    ]);
+        Quiz::create([
+            'question' => $request->question,
+            'choices' => json_encode($request->choices),
+            'answer' => $request->answer,
+        ]);
 
-    return redirect()->route('quizzes.index')->with('success', 'クイズを登録しました。');
+        return redirect()->route('quizzes.index')->with('success', 'クイズを登録しました。');
     }
 
     /**
@@ -65,19 +65,19 @@ class QuizController extends Controller
      */
     public function update(Request $request, Quiz $quiz)
     {
-     $request->validate([
-        'question' => 'required|string',
-        'choices' => 'required|array|min:2',
-        'answer' => 'required|integer',
-    ]);
+         $request->validate([
+            'question' => 'required|string',
+            'choices' => 'required|array|min:2',
+            'answer' => 'required|integer',
+        ]);
 
-    $quiz->update([
-        'question' => $request->question,
-        'choices' => json_encode($request->choices),
-        'answer' => $request->answer,
-    ]);
+        $quiz->update([
+            'question' => $request->question,
+            'choices' => json_encode($request->choices),
+            'answer' => $request->answer,
+        ]);
 
-    return redirect()->route('quizzes.index')->with('success', 'クイズを更新しました。');
+        return redirect()->route('quizzes.index')->with('success', 'クイズを更新しました。');
     }
 
     /**
@@ -85,7 +85,7 @@ class QuizController extends Controller
      */
     public function destroy(Quiz $quiz)
     {
-    $quiz->delete();
-    return redirect()->route('quizzes.index')->with('success', 'クイズを削除しました。');
+        $quiz->delete();
+        return redirect()->route('quizzes.index')->with('success', 'クイズを削除しました。');
     }
 }

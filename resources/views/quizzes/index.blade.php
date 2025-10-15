@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- resources/views/quizzes/index.blade.php -->
 <!DOCTYPE html>
 <html lang="ja">
@@ -59,3 +60,18 @@
     </table>
 </body>
 </html>
+=======
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">クイズ一覧</h2>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                クイズ一覧画面の内容
+            </div>
+        </div>
+    </div>
+</x-app-layout>
+>>>>>>> 05b74733daaef1af26e6069436cae29147acef3b
