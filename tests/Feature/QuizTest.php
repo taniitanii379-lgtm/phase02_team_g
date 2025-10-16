@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\Category; 
 
 class QuizTest extends TestCase
 {
@@ -22,10 +23,13 @@ class QuizTest extends TestCase
     }
     public function test_quiz_can_be_created(): void
     {
+        $category = Category::factory()->create();
+
         $response = $this->post('/quizzes', [
             'question' => 'Laravelとは何ですか？',
             'choices' => ['PHPのフレームワーク', 'JavaScriptのライブラリ', 'CSSのプリプロセッサ'],
             'answer' => 0,
+            'category_id' => $category->id,
         ]);
 
         $response->assertRedirect('/quizzes');
@@ -33,6 +37,7 @@ class QuizTest extends TestCase
         $this->assertDatabaseHas('quizzes', [
             'question' => 'Laravelとは何ですか？',
             'answer' => 0,
+            'category_id' => $category->id,
         ]);
     }
 }

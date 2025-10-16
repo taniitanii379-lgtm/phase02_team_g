@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
             $table->string('question');       // 問題文
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->json('choices');          // 選択肢（JSON形式）
             $table->integer('answer');        // 正解のインデックス（0〜）
             $table->timestamps();

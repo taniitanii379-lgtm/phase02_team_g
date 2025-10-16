@@ -33,12 +33,14 @@ class QuizController extends Controller
             'question' => 'required|string',
             'choices' => 'required|array|min:2',
             'answer' => 'required|integer',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         Quiz::create([
             'question' => $request->question,
             'choices' => json_encode($request->choices),
             'answer' => $request->answer,
+            'category_id' => $request->category_id,
         ]);
 
         return redirect()->route('quizzes.index')->with('success', 'クイズを登録しました。');
