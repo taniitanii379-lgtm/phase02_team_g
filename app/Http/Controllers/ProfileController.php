@@ -22,7 +22,7 @@ class ProfileController extends Controller
 
         // --- プロフィール情報（ダミー）---
         $profile = [
-            'bio' => 'クイズ勉強中です！よろしくお願いします！',
+            'bio' => $user->bio ?? '自己紹介がまだ設定されていません',
             'level' => 18,
             'level_progress' => 75,
             'theme_color' => '#4A90E2',
@@ -67,36 +67,28 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-    $user->fill($request->validated());
+        $user->fill($request->validated());
 
-    if ($user->isDirty('email')) {
-        $user->email_verified_at = null;
-    }
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+        
+        // 新しい画像ファイルがアップロードされた場合
+        if ($request->hasFile('avatar_upload')) {
+            // 'avatars' フォルダに画像を保存し、そのパスを$pathに格納
+            $path = $request->file('avatar_upload')->store('avatars', 'public');
+            // ユーザーのavatarカラムに新しいパスを保存
+            $user->avatar = $path;
+        } 
+        
+        $user->save();
 
-    // --- ▼▼ アイコン更新処理を追加 ▼▼ ---
-    
-    // 1. 新しい画像ファイルがアップロードされた場合
-    if ($request->hasFile('avatar_upload')) {
-        // 'avatars' フォルダに画像を保存し、そのパスを$pathに格納
-        $path = $request->file('avatar_upload')->store('avatars', 'public');
-        // ユーザーのavatarカラムに新しいパスを保存
-        $user->avatar = $path;
-    } 
-    // 2. フリーアイコンが選択された場合
-    elseif ($request->filled('avatar_select')) {
-        $user->avatar = $request->input('avatar_select');
-    }
-    
-    // --- ▲▲ アイコン更新処理ここまで ▲▲ ---
-
-    $user->save();
-
-    return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        
     }
 
     /**
-     * 【既存の機能】ユーザーアカウントを削除する
+     * 【ユーザーアカウントを削除する
      */
     public function destroy(Request $request): RedirectResponse
     {

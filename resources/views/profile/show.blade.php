@@ -135,9 +135,9 @@
 
     <div class="profile-card">
         <header class="profile-header">
-            {{-- profile.show.blade.php の中のimgタグ --}}
-<img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('default_avatar.png') }}" alt="User Icon" class="avatar">
-        </header>
+                {{-- profile.show.blade.php の中のimgタグ --}}
+    <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('default_avatar.png') }}" alt="User Icon" class="avatar">
+            </header>
 
         <main class="profile-body">
             <div class="user-info">

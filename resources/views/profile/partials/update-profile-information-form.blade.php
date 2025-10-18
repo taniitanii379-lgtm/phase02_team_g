@@ -1,11 +1,11 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
+            プロフィール情報
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information, email address, and avatar.") }}
+            Update your account's profile information, email address, and avatar.
         </p>
     </header>
 
@@ -35,27 +35,13 @@
                 @endif
             </div>
 
-            {{-- 1. 画像をアップロード --}}
+            {{-- 画像をアップロード --}}
             <div class="mt-4">
                 <x-input-label for="avatar_upload" :value="__('Upload a new image')" />
                 <x-text-input id="avatar_upload" name="avatar_upload" type="file" class="mt-1 block w-full" accept="image/png, image/jpeg" />
                 <x-input-error class="mt-2" :messages="$errors->get('avatar_upload')" />
             </div>
 
-            {{-- 2. フリーアイコンから選択 --}}
-            <div class="mt-4">
-                 <p class="text-sm text-gray-600">{{ __('Or, select from our free icons:') }}</p>
-                 <div class="flex flex-wrap gap-4 mt-2 icon-list">
-                    @foreach (['avatars/icon1.png', 'avatars/icon2.png', 'avatars/icon3.png', 'avatars/icon4.png'] as $iconPath)
-                        <label class="icon-option">
-                            <input type="radio" name="avatar_select" value="{{ $iconPath }}" {{ $user->avatar == $iconPath ? 'checked' : '' }}>
-                            <img src="{{ asset($iconPath) }}" alt="Free Icon">
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        {{-- ▲▲▲ アイコン画像 変更機能 ここまで ▲▲▲ --}}
 
         {{-- ユーザー名 --}}
         <div>
@@ -87,6 +73,23 @@
             @endif
         </div>
 
+        {{-- 一言コメント & 定型文選択 --}}
+        <div class="mt-6">
+            <x-input-label for="bio" value="一言コメント (100文字以内)" />
+            <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3">{{ old('bio', $user->bio) }}</textarea>
+            <x-input-error class="mt-2" :messages="$errors->get('bio')" />
+        </div>
+
+        <div>
+            <x-input-label for="bio_template" value="定型文から選ぶ" />
+            <select id="bio_template" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <option value="">-- 選択してください --</option>
+                <option value="クイズ初心者です🔰 よろしくお願いします！">初心者です</option>
+                <option value="得意ジャンルを極めたいです！🔥">得意ジャンル極めたい</option>
+                <option value="全国ランキング上位を目指してます！🏆">ランキング上位目指す</option>
+            </select>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
             @if (session('status') === 'profile-updated')
@@ -95,6 +98,21 @@
         </div>
     </form>
 </section>
+
+{{-- ▼▼▼【ここから追加】定型文をテキストエリアに反映させるJavaScript ▼▼▼ --}}
+<script>
+    // このスクリプトが他の場所で実行される可能性も考慮し、要素が存在するかチェック
+    if (document.getElementById('bio') && document.getElementById('bio_template')) {
+        const bioTextarea = document.getElementById('bio');
+        const bioTemplateSelect = document.getElementById('bio_template');
+
+        bioTemplateSelect.addEventListener('change', function() {
+            if (this.value) {
+                bioTextarea.value = this.value;
+            }
+        });
+    }
+</script>
 
 {{-- アイコン選択用のCSS --}}
 <style>
