@@ -24,6 +24,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // スコア (QuizControllerのルートを削除し、PlayControllerに集約しました)
     Route::get('/scores', [ScoreController::class, 'index'])->name('scores.index');
+    //スコア履歴表示
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/scores', [ScoreController::class, 'index'])->name('scores.index');
+   });
 
     // プロフィール
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

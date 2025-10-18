@@ -13,14 +13,20 @@ class Score extends Model
         'user_id',
         'quiz_id',
         'score',
-        'total_questions',
+        'total_questions', // 統合により、このカラムを採用
     ];
 
+    /**
+     * ユーザーとのリレーション
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * クイズとのリレーション
+     */
     public function quiz()
     {
         return $this->belongsTo(Quiz::class);
