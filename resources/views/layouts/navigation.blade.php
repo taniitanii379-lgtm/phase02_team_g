@@ -5,11 +5,9 @@
                 <!-- ホーム -->
                 <a href="{{ route('home') }}" class="px-3 py-2 rounded-md text-sm font-medium">ホーム</a>
 
-                <!-- クイズ作成 -->
-                <a href="{{ route('quizzes.create') }}" class="px-3 py-2 rounded-md text-sm font-medium">クイズ作成</a>
-
-                <!-- クイズプレイ（例として最初のクイズID 1 を指定）-->
-                <a href="{{ route('play.index', ['quiz' => 1]) }}" class="px-3 py-2 rounded-md text-sm font-medium">クイズプレイ</a>
+                <!-- クイズ一覧 / プレイ開始 -->
+                <!-- 修正: quizzes.create と play.index の特定ID参照を削除し、一覧画面に統一 -->
+                <a href="{{ route('quizzes.index') }}" class="px-3 py-2 rounded-md text-sm font-medium">クイズをプレイ</a>
 
                 <!-- スコア -->
                 <a href="{{ route('scores.index') }}" class="px-3 py-2 rounded-md text-sm font-medium">スコア</a>

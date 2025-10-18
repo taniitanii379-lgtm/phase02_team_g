@@ -3,21 +3,20 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\CategorySeeder; // ★ 追記
+use Database\Seeders\QuizSeeder;     // ★ 追記
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        // 必要なSeederのみ呼び出す
+        // CategorySeederをQuizSeederより先に実行する
         $this->call([
-            UserSeeder::class,
-            ProfileSeeder::class,
+            CategorySeeder::class, 
             QuizSeeder::class,
-            // BadgeSeeder::class,    // 不要なのでコメントアウト
-            // CategorySeeder::class, // 不要なのでコメントアウト
         ]);
     }
 }
