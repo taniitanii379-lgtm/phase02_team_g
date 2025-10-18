@@ -116,6 +116,20 @@
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
+
+    <style>
+        /* 戻るボタンのスタイル */
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--sub-text-color, #777);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
@@ -167,7 +181,11 @@
                     プロフィールを編集
                 </a>
             </div>
-            </main>
+
+            <a href="{{ url()->previous() }}" class="back-link">
+                &laquo; 前のページに戻る
+            </a>
+        </main>
     </div>
 
     <script>
