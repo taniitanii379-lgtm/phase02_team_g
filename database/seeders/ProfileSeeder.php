@@ -14,21 +14,27 @@ class ProfileSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (User::all() as $user) {
+        // テストユーザーを作成
+        User::factory()->create([
+                'name' => '名無し', // 名前は自由
+                'email' => 'test@example.com',
+                'bio' => null, // 最初は自己紹介も空
+            ])->each(function ($user) {
             Profile::create([
                 'user_id' => $user->id,
                 'bio' => 'This is a test bio for ' . $user->name,
                 'avatar' => 'default.png', 
-                'level' => 18,
-                'level_progress' => 75,
-                'total_plays' => 256,
-                'accuracy' => 88,
-                'total_score' => 125480,
-                'favorite_genre' => '歴史',
-                'weakest_genre' => '科学',
+                'level' => 1,
+                'level_progress' => 0,
+                'total_plays' => 0,
+                'accuracy' => 0,
+                'total_score' => 0,
+                'favorite_genre' => null,
+                'weakest_genre' => null,
             ]);
             $badges = Badge::find([1, 2]); // ID 1と2のバッジを取得
             $user->badges()->attach($badges);
-        }
+        
+        });
     }
 }

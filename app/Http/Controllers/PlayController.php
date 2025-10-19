@@ -21,18 +21,6 @@ class PlayController extends Controller
     }
 
     /**
-     * クイズ回答送信 (POST /quizzes/{quizId}/submit)
-     */
-    public function submit(Request $request, $quizId, BadgeService $badgeService)
-    {
-        $user = Auth::user();
-
-        $badgeService->awardBadges($user);
-
-        return redirect()->route('home')->with('status', 'クイズを送信しました');
-    }
-
-    /**
      * クイズプレイ画面を開始し、1問目を表示 (GET /play/{quiz})
      */
     public function show(Quiz $quiz)
@@ -112,8 +100,9 @@ class PlayController extends Controller
     /**
      * 最終結果の表示 (GET /play/{quiz}/result)
      */
-    public function result(Quiz $quiz)
+    public function result(Quiz $quiz, BadgeService $badgeService)
     {
+        $user = Auth::user();
         $quiz->load('questions');
         $userAnswers = Session::get('user_answers', []);
 
@@ -148,11 +137,6 @@ class PlayController extends Controller
 
 // app/Http/Controllers/PlayController.php - result メソッド内の修正
 
-        // ... (省略) ...
-
-        // セッションをクリア
-        Session::forget(['quiz_id', 'question_ids', 'current_index', 'user_answers']);
-
         // ★★★ スコア保存処理 ★★★
         \App\Models\Score::create([
             'user_id' => auth()->id(), // 現在認証されているユーザーID
@@ -161,6 +145,29 @@ class PlayController extends Controller
             'total_questions' => $total,
         ]);
         // ★★★ 修正箇所終了 ★★★
+
+        // 1. ユーザーのプロフィールを取得
+        $profile = $user->profile;
+
+        // 2. プレイ回数と累計スコアを更新
+        $profile->total_plays += 1;
+        // 1問100点と仮定してスコアを計算（あなたの採点ロジックに合わせて調整してください）
+        $profile->total_score += ($score * 100); 
+
+        // 3. 新しい正答率を計算（移動平均）
+        if ($profile->total_plays > 0) {
+            $currentAccuracy = ($total > 0) ? ($score / $total) * 100 : 0;
+            // (今までの平均正答率 * (プレイ回数 - 1) + 今回の正答率) / 総プレイ回数
+            $profile->accuracy = round(
+                ($profile->accuracy * ($profile->total_plays - 1) + $currentAccuracy) / $profile->total_plays
+            );
+        }
+        
+        // 4. データベースに変更を保存
+        $profile->save();
+
+        // 5. バッジ獲得チェックを実行
+        $badgeService->awardBadges($user);
 
         return view('play.result', compact('quiz', 'score', 'total', 'results'));
     }
