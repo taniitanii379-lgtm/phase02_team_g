@@ -1,5 +1,5 @@
 services:
-     laravel.test:
+    laravel.test:
         build:
             context: './vendor/laravel/sail/runtimes/8.4'
             dockerfile: Dockerfile
@@ -21,26 +21,13 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
-           
-     phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        links:
-            - mysql:mysql
-        ports:
-            - 8080:80
-        environment:
-            MYSQL_USERNAME: "${DB_USERNAME}"
-            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-            PMA_HOST: mysql
-        networks:
-            - sail
         depends_on:
             - mysql
             - redis
             - meilisearch
             - mailpit
             - selenium
-     mysql:
+    mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
@@ -65,7 +52,7 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
-     redis:
+    redis:
         image: 'redis:alpine'
         ports:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
@@ -80,7 +67,7 @@ services:
                 - ping
             retries: 3
             timeout: 5s
-     meilisearch:
+    meilisearch:
         image: 'getmeili/meilisearch:latest'
         ports:
             - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
@@ -99,14 +86,14 @@ services:
                 - 'http://127.0.0.1:7700/health'
             retries: 3
             timeout: 5s
-     mailpit:
+    mailpit:
         image: 'axllent/mailpit:latest'
         ports:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
-     selenium:
+    selenium:
         image: selenium/standalone-chromium
         extra_hosts:
             - 'host.docker.internal:host-gateway'
