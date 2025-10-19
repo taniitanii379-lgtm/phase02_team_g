@@ -2,22 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\CategorySeeder; // ★ 追記
+use Database\Seeders\QuizSeeder;     // ★ 追記
+use Database\Seeders\UserSeeder;     // ★ 追記
+use Database\Seeders\ProfileSeeder;     // ★ 追記
+use Database\Seeders\ScoreSeeder;     // ★ 追記
+
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // CategorySeederをQuizSeederより先に実行する
+        $this->call([
+            CategorySeeder::class, 
+            QuizSeeder::class,
+            UserSeeder::class,
+            ProfileSeeder::class,
+            ScoreSeeder::class,
         ]);
     }
 }
