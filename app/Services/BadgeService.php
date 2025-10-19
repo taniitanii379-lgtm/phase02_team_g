@@ -12,15 +12,16 @@ class BadgeService
         // ユーザー情報を再取得して最新の状態でチェック
         $user->load('profile', 'badges');
 
-        $this->checkPlaysForBeginnerBadge($user);
+        $this->checkPlaysForNewbieBadge($user);
+        $this->checkPlaysForBeginnerBadge($user);    
         $this->checkPlaysForVeteranBadge($user);
+        $this->checkAccuracyForGeniusBadge($user);
         $this->checkScoreForHighScorerBadge($user);
-        // ... 他のバッジチェック処理を追加 ...
+   
     }
 
     private function awardBadge(User $user, string $badgeName)
     {
-        // ユーザーがまだそのバッジを持っていなければ
         if (!$user->badges->pluck('name')->contains($badgeName)) {
             $badge = Badge::where('name', $badgeName)->first();
             if ($badge) {
@@ -29,10 +30,17 @@ class BadgeService
         }
     }
 
+    private function checkPlaysForNewbieBadge(User $user)
+    {
+        if ($user->profile->total_plays >= 1) {
+            $this->awardBadge($user, 'はじめの一歩');
+        }
+    }
+
     private function checkPlaysForBeginnerBadge(User $user)
     {
         if ($user->profile->total_plays >= 10) {
-            $this->awardBadge($user, 'ビギナー');
+            $this->awardBadge($user, 'クイズデビュー');
         }
     }
     
@@ -40,6 +48,13 @@ class BadgeService
     {
         if ($user->profile->total_plays >= 100) {
             $this->awardBadge($user, '百戦錬磨');
+        }
+    }
+
+    private function checkAccuracyForGeniusBadge(User $user)
+    {
+        if ($user->profile->accuracy >= 80) {
+            $this->awardBadge($user, '安定の天才');
         }
     }
     
