@@ -24,7 +24,7 @@
                             @foreach($scores as $score)
                                 <tr class="hover:bg-gray-50">
                                     <td class="p-2 border-b">{{ $score->created_at->format('Y/m/d H:i') }}</td>
-                                    <td class="p-2 border-b">{{ $score->value ?? 'N/A' }}</td>
+                                    <td class="p-2 border-b">{{ $score->score ?? 'N/A' }}</td>
                                     {{-- Quizモデルがなくても安全に表示 --}}
                                     <td class="p-2 border-b">{{ optional($score->quiz)->title ?? '（不明）' }}</td>
                                 </tr>
