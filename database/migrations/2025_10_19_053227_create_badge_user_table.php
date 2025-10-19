@@ -12,15 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('badge_user', function (Blueprint $table) {
-            // usersテーブルのIDに紐づく外部キー
+            $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
-            // badgesテーブルのIDに紐づく外部キー
             $table->foreignId('badge_id')->constrained()->onDelete('cascade');
-
-            // user_idとbadge_idの組み合わせでユニークにする（同じバッジを2回取得させないため）
-            $table->primary(['user_id', 'badge_id']);
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
+            $table->unique(['user_id', 'badge_id']);
         });
     }
 

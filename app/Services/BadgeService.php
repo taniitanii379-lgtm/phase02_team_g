@@ -7,41 +7,46 @@ use App\Models\Badge;
 
 class BadgeService
 {
-    /**
-     * ユーザーの成績をチェックして、新しいバッジを授与する
-     *
-     * @param User $user
-     */
     public function awardBadges(User $user)
     {
-        // ユーザーの総プレイ回数を取得（これはダミーです。実際にはデータベースから取得してください）
-        $totalPlays = 10; // $user->scores()->count(); のような形になる
+        // ユーザー情報を再取得して最新の状態でチェック
+        $user->load('profile', 'badges');
 
-        // --- 「ビギナー」バッジの獲得条件をチェック ---
-        // 条件：総プレイ回数が10回以上
-        if ($totalPlays >= 10) {
-            $this->awardBadgeToUser($user, 'ビギナー');
-        }
-
-        // --- 「歴史探求者」バッジの獲得条件をチェック ---
-        // 条件：歴史クイズのプレイ回数が5回以上
-        // ...
+        $this->checkPlaysForBeginnerBadge($user);
+        $this->checkPlaysForVeteranBadge($user);
+        $this->checkScoreForHighScorerBadge($user);
+        // ... 他のバッジチェック処理を追加 ...
     }
 
-    /**
-     * 特定のバッジをユーザーに授与する（まだ持っていなければ）
-     *
-     * @param User $user
-     * @param string $badgeName
-     */
-    private function awardBadgeToUser(User $user, string $badgeName)
+    private function awardBadge(User $user, string $badgeName)
     {
-        // バッジ名からバッジのIDを取得
-        $badge = Badge::where('name', $badgeName)->first();
+        // ユーザーがまだそのバッジを持っていなければ
+        if (!$user->badges->pluck('name')->contains($badgeName)) {
+            $badge = Badge::where('name', $badgeName)->first();
+            if ($badge) {
+                $user->badges()->attach($badge->id);
+            }
+        }
+    }
 
-        // バッジが存在し、かつユーザーがまだそのバッジを持っていなければ授与する
-        if ($badge && !$user->badges()->where('badge_id', $badge->id)->exists()) {
-            $user->badges()->attach($badge->id);
+    private function checkPlaysForBeginnerBadge(User $user)
+    {
+        if ($user->profile->total_plays >= 10) {
+            $this->awardBadge($user, 'ビギナー');
+        }
+    }
+    
+    private function checkPlaysForVeteranBadge(User $user)
+    {
+        if ($user->profile->total_plays >= 100) {
+            $this->awardBadge($user, '百戦錬磨');
+        }
+    }
+    
+    private function checkScoreForHighScorerBadge(User $user)
+    {
+        if ($user->profile->total_score >= 100000) {
+            $this->awardBadge($user, '高得点者');
         }
     }
 }

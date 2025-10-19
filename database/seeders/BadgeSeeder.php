@@ -14,10 +14,9 @@ class BadgeSeeder extends Seeder
     public function run(): void
     {
         DB::table('badges')->insert([
-            ['name' => '初級クイズマスター', 'icon' => '🎓', 'description' => '初めてクイズに正解した'],
-            ['name' => '歴史探求者', 'icon' => '📜', 'description' => '歴史クイズを50回プレイした'],
-            ['name' => 'スピードスター', 'icon' => '⚡️', 'description' => '平均回答時間5秒以内を達成'],
-            ['name' => '百戦錬磨', 'icon' => '🛡️', 'description' => '100回クイズをプレイした'],
+            ['name' => 'ビギナー', 'icon' => '🔰', 'description' => 'クイズを10回プレイした'],
+            ['name' => '百戦錬磨', 'icon' => '🛡️', 'description' => 'クイズを100回プレイした'],
+            ['name' => '高得点者', 'icon' => '🏆', 'description' => '累計スコア10万点達成'],
         ]);
     }
 }

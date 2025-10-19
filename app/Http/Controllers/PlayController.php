@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Services\BadgeService;
 
 class PlayController extends Controller
 {
@@ -15,10 +17,13 @@ class PlayController extends Controller
 }
 
     // クイズ回答送信
-    public function submit(Request $request, $quizId)
+    public function submit(Request $request, $quizId, BadgeService $badgeService)
     {
+        $user = Auth::user();
         // TODO: 回答の処理とスコア計算
         // $answers = $request->input('answers');
+
+        $badgeService->awardBadges($user);
 
         return redirect()->route('home')->with('status', 'クイズを送信しました');
     }

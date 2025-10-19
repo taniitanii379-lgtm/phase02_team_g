@@ -187,7 +187,10 @@
                 </a>
             </div>
 
-            <a href="{{ url()->previous() }}" class="back-link">
+            @php
+                $isPreviousEditPage = url()->previous() === route('profile.edit');
+            @endphp
+            <a href="{{ $isPreviousEditPage ? route('home') : url()->previous() }}" class="back-link">
                 &laquo; 前のページに戻る
             </a>
         </main>
