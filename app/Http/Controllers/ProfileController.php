@@ -8,20 +8,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
     /**
- * Show the user's profile page (一覧/タブ用).
- */
-public function index(): View
-{
-    $user = Auth::user();
-    return view('profile.index', compact('user'));
-}
+     * プロフィール画面を表示する
+     * URL: /profile
+     */
+    public function show(): View
+    {
+        $user = Auth::user()->load('profile', 'badges');
+
+        return view('profile.show', compact('user'));
+    }
 
     /**
-     * Display the user's profile form.
+     * プロフィール編集フォームを表示する
+     * URL: /profile/edit
      */
     public function edit(Request $request): View
     {
@@ -31,23 +35,36 @@ public function index(): View
     }
 
     /**
-     * Update the user's profile information.
+     * プロフィール情報の更新
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
+        
+        if ($request->hasFile('avatar_upload')) {
+            $path = $request->file('avatar_upload')->store('avatars', 'public');
+            $user->avatar = $path;
+        } 
 
-        $request->user()->save();
+        if ($request->filled('theme_color')) {
+            $user->profile->update([
+                'theme_color' => $request->input('theme_color'),
+            ]);
+        }
+        
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.show')->with('status', 'profile-updated');
+        
     }
 
     /**
-     * Delete the user's account.
+     * ユーザーアカウントを削除する
      */
     public function destroy(Request $request): RedirectResponse
     {

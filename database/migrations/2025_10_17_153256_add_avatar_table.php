@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('badges', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique(); 
-            $table->string('description');   
-            $table->string('icon');        
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+        // avatarカラムを追加。最初は空でもOK(nullable)で、nameカラムの後ろに配置
+        $table->string('avatar')->nullable()->after('name');
         });
     }
 
@@ -25,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('badges');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -13,7 +13,7 @@
                 <a href="{{ route('scores.index') }}" class="px-3 py-2 rounded-md text-sm font-medium">スコア</a>
 
                 <!-- プロフィール -->
-                <a href="{{ route('profile.index') }}" class="px-3 py-2 rounded-md text-sm font-medium">プロフィール</a>
+                <a href="{{ route('profile.show') }}" class="px-3 py-2 rounded-md text-sm font-medium">プロフィール</a>
             </div>
 
             <!-- ロゴなど -->

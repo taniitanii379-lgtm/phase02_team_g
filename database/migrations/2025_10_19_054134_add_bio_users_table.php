@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('badges', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique(); 
-            $table->string('description');   
-            $table->string('icon');        
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->text('bio')->nullable()->after('email');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('badges');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('bio');
+        });
     }
 };
