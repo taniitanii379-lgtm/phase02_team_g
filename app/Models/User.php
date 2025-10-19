@@ -52,7 +52,6 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
     
-    // Userは多くのBadgeを持つ（これは既存）
     public function badges()
     {
         return $this->belongsToMany(Badge::class)->withTimestamps();

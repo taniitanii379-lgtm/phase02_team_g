@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profile extends Model
 {
-    protected $guarded = ['id']; // id以外は全て一括代入を許可
+    protected $guarded = ['id']; 
 
     public function user()
     {

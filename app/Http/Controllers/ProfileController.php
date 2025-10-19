@@ -46,13 +46,16 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
         
-        // 新しい画像ファイルがアップロードされた場合
         if ($request->hasFile('avatar_upload')) {
-            // 'avatars' フォルダに画像を保存し、そのパスを$pathに格納
             $path = $request->file('avatar_upload')->store('avatars', 'public');
-            // ユーザーのavatarカラムに新しいパスを保存
             $user->avatar = $path;
         } 
+
+        if ($request->filled('theme_color')) {
+            $user->profile->update([
+                'theme_color' => $request->input('theme_color'),
+            ]);
+        }
         
         $user->save();
 

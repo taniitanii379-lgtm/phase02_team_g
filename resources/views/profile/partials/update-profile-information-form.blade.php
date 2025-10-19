@@ -35,7 +35,6 @@
         </div>
 
         <hr class="my-6 border-gray-200">
-
         <div>
             <div>
                 <x-input-label for="name" :value="__('ユーザー名')" />
@@ -51,10 +50,15 @@
                 @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 @endif
             </div>
+
+            <div class="mt-6">
+                <x-input-label for="theme_color" value="テーマカラー" />
+                <input id="theme_color" name="theme_color" type="color" class="mt-1 block" value="{{ old('theme_color', $user->profile->theme_color) }}">
+                <x-input-error class="mt-2" :messages="$errors->get('theme_color')" />
+            </div>
         </div>
 
         <hr class="my-6 border-gray-200">
-
         <div>
             <x-input-label for="bio" value="一言コメント (100文字以内)" />
             <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3">{{ old('bio', $user->bio) }}</textarea>
@@ -78,12 +82,6 @@
             @endif
         </div>
     </form>
-
-    <div class="mt-6 text-center">
-        <a href="{{ route('profile.show') }}" class="text-sm text-gray-600 hover:text-gray-900 underline">
-            &laquo; プロフィールに戻る
-        </a>
-    </div>
 </section>
 
 <script>

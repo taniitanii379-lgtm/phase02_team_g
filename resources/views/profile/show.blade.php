@@ -7,7 +7,7 @@
     <style>
         /* 基本的な変数はそのまま */
         :root {
-            --theme-color: {{ $user->profile->theme_color ?? '#4A90E2' }};
+            --theme-color: {{ $user->profile->theme_color ?? '#2fcb85ff' }};
             --card-bg: #ffffff;
             --text-color: #333;
             --sub-text-color: #777;
