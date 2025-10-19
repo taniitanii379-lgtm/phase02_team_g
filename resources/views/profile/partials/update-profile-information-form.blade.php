@@ -5,76 +5,57 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            Update your account's profile information, email address, and avatar.
+            アカウントのプロフィール情報やメールアドレスを更新します。
         </p>
     </header>
 
-    {{-- メールアドレス確認メール送信用 --}}
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
 
-    {{-- メインの更新フォーム --}}
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
-        {{-- ▼▼▼ アイコン画像 変更機能 ▼▼▼ --}}
         <div>
-            <x-input-label for="avatar" :value="__('Avatar')" />
-            
-            {{-- 現在のアイコン --}}
-            <div class="mt-2">
+            <x-input-label for="avatar_upload" :value="__('アイコン')" />
+            <div class="mt-2 flex items-center gap-4">
                 @if ($user->avatar)
-                    <img src="{{ Str::startsWith($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar) }}" alt="Current Avatar" class="rounded-full h-20 w-20 object-cover">
+                    <img src="{{ Str::startsWith($user->avatar, ['http', 'avatars/']) ? asset($user->avatar) : asset('storage/' . $user->avatar) }}" alt="Current Avatar" class="rounded-full h-20 w-20 object-cover">
                 @else
-                    {{-- デフォルトアイコンの表示 --}}
-                    <div class="rounded-full h-20 w-20 bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-500">No Image</span>
+                    <div class="rounded-full h-20 w-20 bg-gray-200 flex items-center justify-center text-gray-500">
+                        <span>No Image</span>
                     </div>
                 @endif
-            </div>
-
-            {{-- 画像をアップロード --}}
-            <div class="mt-4">
-                <x-input-label for="avatar_upload" :value="__('Upload a new image')" />
-                <x-text-input id="avatar_upload" name="avatar_upload" type="file" class="mt-1 block w-full" accept="image/png, image/jpeg" />
-                <x-input-error class="mt-2" :messages="$errors->get('avatar_upload')" />
-            </div>
-
-
-        {{-- ユーザー名 --}}
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
-        </div>
-
-        {{-- メールアドレス --}}
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
+                <div class="flex-grow">
+                    <x-text-input id="avatar_upload" name="avatar_upload" type="file" class="block w-full" accept="image/png, image/jpeg" />
+                    <x-input-error class="mt-2" :messages="$errors->get('avatar_upload')" />
                 </div>
-            @endif
+            </div>
         </div>
 
-        {{-- 一言コメント & 定型文選択 --}}
-        <div class="mt-6">
+        <hr class="my-6 border-gray-200">
+
+        <div>
+            <div>
+                <x-input-label for="name" :value="__('ユーザー名')" />
+                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            </div>
+
+            <div class="mt-4">
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+                <x-input-error class="mt-2" :messages="$errors->get('email')" />
+
+                @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+                @endif
+            </div>
+        </div>
+
+        <hr class="my-6 border-gray-200">
+
+        <div>
             <x-input-label for="bio" value="一言コメント (100文字以内)" />
             <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3">{{ old('bio', $user->bio) }}</textarea>
             <x-input-error class="mt-2" :messages="$errors->get('bio')" />
@@ -91,15 +72,33 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button>{{ __('保存') }}</x-primary-button>
             @if (session('status') === 'profile-updated')
                 <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-gray-600">{{ __('Saved.') }}</p>
             @endif
         </div>
     </form>
+
+    <div class="mt-6 text-center">
+        <a href="{{ route('profile.show') }}" class="text-sm text-gray-600 hover:text-gray-900 underline">
+            &laquo; プロフィールに戻る
+        </a>
+    </div>
 </section>
 
-{{-- ▼▼▼【ここから追加】定型文をテキストエリアに反映させるJavaScript ▼▼▼ --}}
+<script>
+    if (document.getElementById('bio') && document.getElementById('bio_template')) {
+        const bioTextarea = document.getElementById('bio');
+        const bioTemplateSelect = document.getElementById('bio_template');
+
+        bioTemplateSelect.addEventListener('change', function() {
+            if (this.value) {
+                bioTextarea.value = this.value;
+            }
+        });
+    }
+</script>
+
 <script>
     // このスクリプトが他の場所で実行される可能性も考慮し、要素が存在するかチェック
     if (document.getElementById('bio') && document.getElementById('bio_template')) {
@@ -114,7 +113,6 @@
     }
 </script>
 
-{{-- アイコン選択用のCSS --}}
 <style>
     .icon-list {
         display: flex;

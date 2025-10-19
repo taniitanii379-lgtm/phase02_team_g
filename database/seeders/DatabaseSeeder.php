@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProfileSeeder::class,
             QuizSeeder::class,
-            // BadgeSeeder::class,    // 不要なのでコメントアウト
+            BadgeSeeder::class,
+            ProfileSeeder::class,
             // CategorySeeder::class, // 不要なのでコメントアウト
         ]);
     }

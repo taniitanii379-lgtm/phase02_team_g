@@ -7,7 +7,7 @@
     <style>
         /* 基本的な変数はそのまま */
         :root {
-            --theme-color: {{ $profile['theme_color'] ?? '#4A90E2' }};
+            --theme-color: {{ $user->profile->theme_color ?? '#4A90E2' }};
             --card-bg: #ffffff;
             --text-color: #333;
             --sub-text-color: #777;
@@ -135,15 +135,20 @@
 
     <div class="profile-card">
         <header class="profile-header">
-                {{-- profile.show.blade.php の中のimgタグ --}}
-    <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('default_avatar.png') }}" alt="User Icon" class="avatar">
-            </header>
+            <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('default_avatar.png') }}" alt="User Icon" class="avatar">
+        </header>
 
         <main class="profile-body">
             <div class="user-info">
                 <h1 class="user-name">{{ $user->name }}</h1>
-                <div class="user-level">Level. {{ $profile['level'] }}</div>
-                <p class="user-bio">"{{ $profile['bio'] }}"</p>
+                <div class="user-level">Level. {{ $user->profile->level }}</div>
+                <p class="user-bio">
+                    @if ($user->bio)
+                        "{{ $user->bio }}"
+                    @else
+                        <span style="color: #999;">一言コメントはまだ設定されていません。</span>
+                    @endif
+                </p>
             </div>
 
             <nav class="tab-nav">
@@ -153,22 +158,22 @@
 
             <div class="tab-content active" id="stats">
                 <div class="stats-grid">
-                    <div class="stat-item"><div class="value">{{ number_format($stats['total_score']) }}</div><div class="label">累計スコア</div></div>
-                    <div class="stat-item"><div class="value">{{ $stats['total_plays'] }}</div><div class="label">総プレイ回数</div></div>
-                    <div class="stat-item"><div class="value">{{ $stats['accuracy'] }}%</div><div class="label">正答率</div></div>
+                    <div class="stat-item"><div class="value">{{ number_format($user->profile->total_score) }}</div><div class="label">累計スコア</div></div>
+                    <div class="stat-item"><div class="value">{{ $user->profile->total_plays }}</div><div class="label">総プレイ回数</div></div>
+                    <div class="stat-item"><div class="value">{{ $user->profile->accuracy }}%</div><div class="label">正答率</div></div>
                 </div>
                  <div class="stats-grid" style="margin-top: 1.5rem;">
-                    <div class="stat-item"><div class="value">{{ $stats['favorite_genre'] }}</div><div class="label">得意ジャンル</div></div>
-                    <div class="stat-item"><div class="value">{{ $stats['weakest_genre'] }}</div><div class="label">苦手ジャンル</div></div>
+                    <div class="stat-item"><div class="value">{{ $user->profile->favorite_genre ?? '未設定' }}</div><div class="label">得意ジャンル</div></div>
+                    <div class="stat-item"><div class="value">{{ $user->profile->weakest_genre ?? '未設定' }}</div><div class="label">苦手ジャンル</div></div>
                 </div>
             </div>
 
             <div class="tab-content" id="badges">
                 <div class="badges-grid">
-                    @forelse ($badges as $badge)
-                        <div class="badge-item" title="{{ $badge['description'] }}">
-                            <div class="badge-icon">{{ $badge['icon'] }}</div>
-                            <div class="badge-name">{{ $badge['name'] }}</div>
+                    @forelse ($user->badges as $badge)
+                        <div class="badge-item" title="{{ $badge->description }}">
+                            <div class="badge-icon">{{ $badge->icon }}</div>
+                            <div class="badge-name">{{ $badge->name }}</div>
                         </div>
                     @empty
                         <p>まだ達成したバッジはありません。</p>
