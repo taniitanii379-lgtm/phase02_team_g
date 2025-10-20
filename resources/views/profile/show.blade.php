@@ -115,9 +115,7 @@
         .badge-name { font-size: 0.8rem; color: var(--sub-text-color); margin-top: 0.5rem; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
 
-    <style>
         /* 戻るボタンのスタイル */
         .back-link {
             display: inline-block;
@@ -128,6 +126,74 @@
         }
         .back-link:hover {
             text-decoration: underline;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none; /* 初期状態は非表示 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+        .modal-icon {
+            font-size: 4rem;
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        .modal-description {
+            color: var(--sub-text-color);
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #ccc;
+            background: none;
+            border: none;
+        }
+        .modal-close:hover {
+            color: #999;
+        }
+
+        .badge-trigger {
+            text-decoration: none; 
+            color: #333; 
+            border-bottom: 1px solid #ccc; 
+            transition: all 0.2s ease; 
+        }
+
+        .badge-trigger:hover {
+            color: #007bff; 
+            border-bottom-color: #007bff; 
+        }
+
+        .badge-item.locked {
+            filter: grayscale(100%); 
+            opacity: 0.6;            
+        }
+
+        .badge-item.locked .badge-name {
+            color: #a0aec0; 
         }
     </style>
 </head>
@@ -170,14 +236,22 @@
 
             <div class="tab-content" id="badges">
                 <div class="badges-grid">
-                    @forelse ($user->badges as $badge)
-                        <div class="badge-item" title="{{ $badge->description }}">
-                            <div class="badge-icon">{{ $badge->icon }}</div>
-                            <div class="badge-name">{{ $badge->name }}</div>
-                        </div>
-                    @empty
-                        <p>まだ達成したバッジはありません。</p>
-                    @endforelse
+                    @foreach ($allBadges as $badge)
+                        @php
+                            $isAcquired = $userBadgeIds->contains($badge->id);
+                        @endphp
+                    <a href="#" 
+                class="badge-trigger"
+                data-icon="{{ $badge->icon }}"
+                data-name="{{ $badge->name }}"
+                data-description="{{ $badge->description }}">
+                
+                <div class="badge-item {{ $isAcquired ? '' : 'locked' }}">
+                    <div class="badge-icon">{{ $badge->icon }}</div>
+                    <div class="badge-name">{{ $badge->name }}</div>
+                </div>
+            </a>
+                @endforeach
                 </div>
             </div>
 
@@ -196,10 +270,19 @@
         </main>
     </div>
 
+    <div id="badge-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close-button" class="modal-close">&times;</button>
+            <div id="modal-badge-icon" class="modal-icon"></div>
+            <h2 id="modal-badge-name" class="modal-title"></h2>
+            <p id="modal-badge-description" class="modal-description"></p>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
-
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 // すべてのボタンとコンテンツから 'active' クラスを削除
@@ -209,6 +292,43 @@
                 // クリックされたボタンと対応するコンテンツに 'active' クラスを追加
                 button.classList.add('active');
                 document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        const badgeModal = document.getElementById('badge-modal');
+            const badgeTriggers = document.querySelectorAll('.badge-trigger');
+            const closeModalButton = document.getElementById('modal-close-button');
+
+            // 各バッジがクリックされた時の処理
+            badgeTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function (event) {
+                    event.preventDefault(); // リンクのデフォルト動作をキャンセル
+
+                    // クリックされたバッジの情報をdata属性から取得
+                    const icon = this.dataset.icon;
+                    const name = this.dataset.name;
+                    const description = this.dataset.description;
+
+                    // モーダルの内容を書き換える
+                    document.getElementById('modal-badge-icon').innerText = icon;
+                    document.getElementById('modal-badge-name').innerText = name;
+                    document.getElementById('modal-badge-description').innerText = description;
+
+                    // モーダルを表示する
+                    badgeModal.style.display = 'flex';
+                });
+            });
+
+            // 閉じるボタンがクリックされた時の処理
+            closeModalButton.addEventListener('click', function () {
+                badgeModal.style.display = 'none';
+            });
+
+            // 背景がクリックされた時も閉じる
+            badgeModal.addEventListener('click', function (event) {
+                if (event.target === badgeModal) {
+                    badgeModal.style.display = 'none';
+                }
             });
         });
     </script>

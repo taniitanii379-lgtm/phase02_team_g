@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Models\Badge;
 
 class ProfileController extends Controller
 {
@@ -19,8 +20,10 @@ class ProfileController extends Controller
     public function show(): View
     {
         $user = Auth::user()->load('profile', 'badges');
+        $allBadges = Badge::all();
+        $userBadgeIds = $user->badges->pluck('id');
 
-        return view('profile.show', compact('user'));
+        return view('profile.show', compact('user', 'allBadges', 'userBadgeIds'));
     }
 
     /**
