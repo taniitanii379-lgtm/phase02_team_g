@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Models\Badge;
 
 class ProfileController extends Controller
 {
@@ -19,8 +20,26 @@ class ProfileController extends Controller
     public function show(): View
     {
         $user = Auth::user()->load('profile', 'badges');
+        $allBadges = Badge::all();
+        $userBadgeIds = $user->badges->pluck('id');
+        $profile = $user->profile;
+        $xpMap = config('leveling.xp_map');
+        $currentLevel = $profile->level;
+        $currentLevelXp = $xpMap[$currentLevel] ?? 0;
+        
+        // 次のレベルの定義があれば進捗を計算
+        if (isset($xpMap[$currentLevel + 1])) {
+            $nextLevelXp = $xpMap[$currentLevel + 1];
+            $xpForNextLevel = $nextLevelXp - $currentLevelXp;
+            $xpIntoCurrentLevel = $profile->experience_points - $currentLevelXp;
+            
+            $profile->level_progress = ($xpForNextLevel > 0) ? round(($xpIntoCurrentLevel / $xpForNextLevel) * 100) : 0;
+        } else {
+            // 最大レベルに到達した場合
+            $profile->level_progress = 100;
+        }
 
-        return view('profile.show', compact('user'));
+        return view('profile.show', compact('user', 'allBadges', 'userBadgeIds'));
     }
 
     /**

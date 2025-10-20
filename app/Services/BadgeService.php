@@ -26,6 +26,8 @@ class BadgeService
             $badge = Badge::where('name', $badgeName)->first();
             if ($badge) {
                 $user->badges()->attach($badge->id);
+
+                session()->flash('new_badge', $badge);
             }
         }
     }
