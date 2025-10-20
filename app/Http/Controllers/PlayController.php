@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Services\BadgeService;
+use App\Services\LevelingService;
 
 class PlayController extends Controller
 {
@@ -100,7 +101,7 @@ class PlayController extends Controller
     /**
      * 最終結果の表示 (GET /play/{quiz}/result)
      */
-    public function result(Quiz $quiz, BadgeService $badgeService)
+    public function result(Quiz $quiz, BadgeService $badgeService, LevelingService $levelingService)
     {
         $user = Auth::user();
         $quiz->load('questions');
@@ -168,6 +169,9 @@ class PlayController extends Controller
 
         // 5. バッジ獲得チェックを実行
         $badgeService->awardBadges($user);
+
+        $earnedXp = $score * 10;
+        $levelingService->addXp($user, $earnedXp);
 
         return view('play.result', compact('quiz', 'score', 'total', 'results'));
     }

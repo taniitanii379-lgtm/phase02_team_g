@@ -39,18 +39,32 @@
             text-align: center;
             border-radius: 16px 16px 0 0;
         }
-        .avatar {
+        .avatar-wrapper {
+            position: absolute;
             width: 120px;
             height: 120px;
-            border-radius: 50%;
-            border: 5px solid white;
-            position: absolute;
             bottom: -60px;
             left: 50%;
             transform: translateX(-50%);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            background-color: #e0e0e0;
+            border-radius: 50%;
         }
+
+        .avatar-progress {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 105px; 
+            height: 105px;
+            border-radius: 50%;
+        }
+
         /* プロフィール本体 */
         .profile-body {
             padding: 80px 30px 30px;
@@ -201,7 +215,11 @@
 
     <div class="profile-card">
         <header class="profile-header">
-            <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('default_avatar.png') }}" alt="User Icon" class="avatar">
+            <div class="avatar-wrapper">
+                <div class="avatar-progress" style="background: conic-gradient(var(--theme-color) {{ $user->profile->level_progress ?? 0 }}%, #e9ecef 0);">
+                    <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('default_avatar.png') }}" alt="User Icon" class="avatar">
+                </div>
+            </div>
         </header>
 
         <main class="profile-body">
