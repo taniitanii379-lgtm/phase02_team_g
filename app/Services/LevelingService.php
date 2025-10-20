@@ -35,6 +35,9 @@ class LevelingService
         // whileループにすることで、一度に複数レベルアップするケースにも対応
         while (isset($xpMap[$nextLevel]) && $profile->experience_points >= $xpMap[$nextLevel]) {
             $profile->level = $nextLevel;
+
+            session()->flash('level_up', $nextLevel);
+            
             $nextLevel++;
         }
     }
