@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     HomeController,
     PlayController, // PlayControllerを使用
+    QuizController,
     ScoreController,
     ProfileController
 };
@@ -48,7 +49,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 結果表示 (新設)
     Route::get('/play/{quiz}/result', [PlayController::class, 'result'])->name('play.result'); 
 
-// ... (省略) ...
+// ... (省略) ... 
+    
+    // クイズ管理用ルート（QuizController）
+    Route::resource('quizzes-management', QuizController::class)->parameters(['quizzes-management' => 'quiz']);
+    Route::patch('/quizzes/{id}/update-title', [QuizController::class, 'updateTitle'])
+    ->name('quizzes.updateTitle');
+
 });
 
 require __DIR__ . '/auth.php';
