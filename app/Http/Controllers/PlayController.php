@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Quiz;
 use App\Models\Question;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session; // セッションを使用するため必須
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Services\BadgeService;
+use App\Services\LevelingService;
 
 class PlayController extends Controller
 {
@@ -98,8 +101,9 @@ class PlayController extends Controller
     /**
      * 最終結果の表示 (GET /play/{quiz}/result)
      */
-    public function result(Quiz $quiz)
+    public function result(Quiz $quiz, BadgeService $badgeService, LevelingService $levelingService)
     {
+        $user = Auth::user();
         $quiz->load('questions');
         $userAnswers = Session::get('user_answers', []);
 
@@ -134,11 +138,6 @@ class PlayController extends Controller
 
 // app/Http/Controllers/PlayController.php - result メソッド内の修正
 
-        // ... (省略) ...
-
-        // セッションをクリア
-        Session::forget(['quiz_id', 'question_ids', 'current_index', 'user_answers']);
-
         // ★★★ スコア保存処理 ★★★
         \App\Models\Score::create([
             'user_id' => auth()->id(), // 現在認証されているユーザーID
@@ -147,6 +146,32 @@ class PlayController extends Controller
             'total_questions' => $total,
         ]);
         // ★★★ 修正箇所終了 ★★★
+
+        // 1. ユーザーのプロフィールを取得
+        $profile = $user->profile;
+
+        // 2. プレイ回数と累計スコアを更新
+        $profile->total_plays += 1;
+        // 1問100点と仮定してスコアを計算（あなたの採点ロジックに合わせて調整してください）
+        $profile->total_score += ($score * 100); 
+
+        // 3. 新しい正答率を計算（移動平均）
+        if ($profile->total_plays > 0) {
+            $currentAccuracy = ($total > 0) ? ($score / $total) * 100 : 0;
+            // (今までの平均正答率 * (プレイ回数 - 1) + 今回の正答率) / 総プレイ回数
+            $profile->accuracy = round(
+                ($profile->accuracy * ($profile->total_plays - 1) + $currentAccuracy) / $profile->total_plays
+            );
+        }
+        
+        // 4. データベースに変更を保存
+        $profile->save();
+
+        // 5. バッジ獲得チェックを実行
+        $badgeService->awardBadges($user);
+
+        $earnedXp = $score * 10;
+        $levelingService->addXp($user, $earnedXp);
 
         return view('play.result', compact('quiz', 'score', 'total', 'results'));
     }

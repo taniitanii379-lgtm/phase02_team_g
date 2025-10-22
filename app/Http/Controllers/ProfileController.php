@@ -8,20 +8,43 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Carbon\Carbon;
+use App\Models\Badge;
 
 class ProfileController extends Controller
 {
     /**
- * Show the user's profile page (一覧/タブ用).
- */
-public function index(): View
-{
-    $user = Auth::user();
-    return view('profile.index', compact('user'));
-}
+     * プロフィール画面を表示する
+     * URL: /profile
+     */
+    public function show(): View
+    {
+        $user = Auth::user()->load('profile', 'badges');
+        $allBadges = Badge::all();
+        $userBadgeIds = $user->badges->pluck('id');
+        $profile = $user->profile;
+        $xpMap = config('leveling.xp_map');
+        $currentLevel = $profile->level;
+        $currentLevelXp = $xpMap[$currentLevel] ?? 0;
+        
+        // 次のレベルの定義があれば進捗を計算
+        if (isset($xpMap[$currentLevel + 1])) {
+            $nextLevelXp = $xpMap[$currentLevel + 1];
+            $xpForNextLevel = $nextLevelXp - $currentLevelXp;
+            $xpIntoCurrentLevel = $profile->experience_points - $currentLevelXp;
+            
+            $profile->level_progress = ($xpForNextLevel > 0) ? round(($xpIntoCurrentLevel / $xpForNextLevel) * 100) : 0;
+        } else {
+            // 最大レベルに到達した場合
+            $profile->level_progress = 100;
+        }
+
+        return view('profile.show', compact('user', 'allBadges', 'userBadgeIds'));
+    }
 
     /**
-     * Display the user's profile form.
+     * プロフィール編集フォームを表示する
+     * URL: /profile/edit
      */
     public function edit(Request $request): View
     {
@@ -31,23 +54,36 @@ public function index(): View
     }
 
     /**
-     * Update the user's profile information.
+     * プロフィール情報の更新
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
+        
+        if ($request->hasFile('avatar_upload')) {
+            $path = $request->file('avatar_upload')->store('avatars', 'public');
+            $user->avatar = $path;
+        } 
 
-        $request->user()->save();
+        if ($request->filled('theme_color')) {
+            $user->profile->update([
+                'theme_color' => $request->input('theme_color'),
+            ]);
+        }
+        
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.show')->with('status', 'profile-updated');
+        
     }
 
     /**
-     * Delete the user's account.
+     * ユーザーアカウントを削除する
      */
     public function destroy(Request $request): RedirectResponse
     {

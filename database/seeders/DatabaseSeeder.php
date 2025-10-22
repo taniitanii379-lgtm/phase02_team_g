@@ -17,12 +17,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // CategorySeederをQuizSeederより先に実行する
         $this->call([
             CategorySeeder::class, 
             QuizSeeder::class,
             UserSeeder::class,
             ProfileSeeder::class,
+            BadgeSeeder::class,
             ScoreSeeder::class,
         ]);
     }
