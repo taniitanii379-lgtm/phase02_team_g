@@ -7,17 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
 {
-    use HasFactory;
+    /** @use HasFactory<\Database\Factories\QuizFactory> */
+    use HasFactory;// ★ 複数代入できるカラムを指定（フォームで受け取るもの）
+    protected $fillable = [ 'title',
+        'question',
+        'choices',
+        'answer',
+        'category_id',];
 
-    // 代入を許可するカラムを指定
-    protected $fillable = [
-        'title',
-        'category_id',
+    // ★ choices を JSON → 配列として自動変換
+    protected $casts = [
+        'choices' => 'array',
     ];
-
-    // Question とのリレーション
-    public function questions()
+    // 🔹 Category モデルとのリレーションを定義
+    public function category()
     {
-        return $this->hasMany(Question::class);
+        return $this->belongsTo(Category::class);
+    }
+
+    // 🔹 カテゴリ名を安全に取得（存在しない場合は「未分類」）
+    public function getCategoryNameAttribute()
+    {
+        return optional($this->category)->name ?? '未分類';
     }
 }

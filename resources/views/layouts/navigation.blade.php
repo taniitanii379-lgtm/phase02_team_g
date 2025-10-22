@@ -11,6 +11,9 @@
 
                 <!-- スコア -->
                 <a href="{{ route('scores.index') }}" class="px-3 py-2 rounded-md text-sm font-medium">スコア</a>
+                
+                <!-- クイズ作成 -->
+                <a href="{{ route('quizzes-management.index') }}" class="px-3 py-2 rounded-md text-sm font-medium">クイズ作成</a>
 
                 <!-- プロフィール -->
                 <a href="{{ route('profile.show') }}" class="px-3 py-2 rounded-md text-sm font-medium">プロフィール</a>
