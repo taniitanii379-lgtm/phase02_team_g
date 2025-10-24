@@ -1,7 +1,5 @@
 <x-app-layout>
-    <!-- ヘッダーはスキップして全画面表示 -->
-    
-    <div class="relative min-h-screen bg-blue-600 overflow-hidden ">
+    <div class="relative min-h-screen bg-blue-600 overflow-hidden">
         <!-- Grid Background -->
         <div class="absolute inset-0" style="
             background-image: 
@@ -11,18 +9,18 @@
         "></div>
         
         <!-- Main Content -->
-        <div class="relative z-10 flex items-center justify-between px-8 md:px-16 py-32 min-h-screen">
+        <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between px-4 sm:px-8 md:px-16 py-16 sm:py-24 lg:py-32 min-h-screen">
             <!-- Left Side Text -->
-            <div class="text-white max-w-2xl">
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-8">
+            <div class="text-white max-w-2xl text-center lg:text-left mb-12 lg:mb-0">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 sm:mb-8">
                     CREATIVE<br>
                     <span class="text-yellow-300">INNOVATOR</span>
                 </h1>
-                <p class="text-lg md:text-xl mb-12">世界基準の明日を創る</p>
+                <p class="text-base sm:text-lg md:text-xl mb-8 sm:mb-12">世界基準の明日を創る</p>
                 
                 <!-- クイズスタートボタン -->
                 <a href="{{ route('quizzes.index') }}" 
-                   class="inline-block bg-yellow-300 hover:bg-yellow-400 text-blue-900 font-bold px-8 py-4 rounded-lg text-lg transition duration-300 shadow-lg hover:shadow-xl">
+                   class="inline-block bg-yellow-300 hover:bg-yellow-400 text-blue-900 font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg transition duration-300 shadow-lg hover:shadow-xl">
                     クイズをはじめる
                 </a>
             </div>
@@ -57,16 +55,6 @@
                                  fill="#93C5FD"/>
                     </svg>
                 </div>
-            </div>
-        </div>
-
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-sm animate-bounce">
-            <div class="flex flex-col items-center">
-                <span class="mb-2">Scroll</span>
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-                </svg>
             </div>
         </div>
     </div>
