@@ -19,16 +19,16 @@ class QuizSeeder extends Seeder
         DB::table('questions')->truncate();
         DB::table('quizzes')->truncate();
 
-        // -------------------------
-        // 1. クイズタイトル (quizzesテーブル) の登録
-        // -------------------------
+       // -------------------------
+// 1. クイズタイトル (quizzesテーブル) の登録
+// -------------------------
 
-        $quiz_data = [
-            ['title' => '世界の首都クイズ (初級)', 'category_id' => 1],
-            ['title' => '科学・自然クイズ (初級)', 'category_id' => 2],
-        ];
+$quiz_data = [
+    ['title' => '世界の首都クイズ (初級)', 'category_id' => 1, 'question' => ''],
+    ['title' => '科学・自然クイズ (初級)', 'category_id' => 2, 'question' => ''],
+];
 
-        DB::table('quizzes')->insert($quiz_data);
+DB::table('quizzes')->insert($quiz_data);
 
         // 登録されたクイズのIDを取得 (タイトルの昇順)
         $quizzes = DB::table('quizzes')->orderBy('title')->get();

@@ -25,6 +25,11 @@ class Quiz extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function questions()
+{
+    return $this->hasMany(Question::class);
+}
+
     // 🔹 カテゴリ名を安全に取得（存在しない場合は「未分類」）
     public function getCategoryNameAttribute()
     {
