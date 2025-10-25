@@ -55,14 +55,14 @@ class BadgeService
 
     private function checkAccuracyForGeniusBadge(User $user)
     {
-        if ($user->profile->accuracy >= 80) {
+        if ($user->profile->accuracy >= 90) {
             $this->awardBadge($user, '安定の天才');
         }
     }
     
     private function checkScoreForHighScorerBadge(User $user)
     {
-        if ($user->profile->total_score >= 100000) {
+        if ($user->profile->total_score >= 10000) {
             $this->awardBadge($user, '高得点者');
         }
     }

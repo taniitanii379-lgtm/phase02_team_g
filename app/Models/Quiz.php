@@ -35,4 +35,5 @@ class Quiz extends Model
     {
         return optional($this->category)->name ?? '未分類';
     }
+
 }
