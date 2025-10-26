@@ -12,9 +12,13 @@ class Question extends Model
     protected $fillable = [
         'quiz_id',
         'question',
+        'choices', 
         'answer',
     ];
-
+// choices を JSON ↔ 配列として自動変換
+    protected $casts = [
+        'choices' => 'array', // ここを追加
+    ];
     public function quiz()
     {
         return $this->belongsTo(Quiz::class);

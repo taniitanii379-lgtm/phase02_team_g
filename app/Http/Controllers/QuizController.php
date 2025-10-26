@@ -32,22 +32,38 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
-         $request->validate([
-            'question' => 'required|string',
-            'choices' => 'required|array|min:2',
-            'answer' => 'required|integer',
-            'category_id' => 'nullable|integer',
-            'title' => 'required|string|max:255', // ✅ タイトルも追加
-        ]);
+        $request->validate([
+    'title' => 'required|string|max:255',             // クイズ名
+    'category_id' => 'nullable|integer',              // カテゴリ
+    'questions' => 'required|array|min:1',            // 1問以上
+    'questions.*.question' => 'required|string',      // 各問題の問題文
+    'questions.*.choices' => 'required|array|min:2', // 各問題の選択肢（2つ以上）
+    'questions.*.answer' => 'required|integer',       // 各問題の正解番号
+]);
 
-        Quiz::create([
-            'title' => $request->title, // ✅ 追加
-            'question' => $request->question,
-            'choices' => $request->choices,
-            'answer' => $request->answer,
-            'category_id' => $request->category_id ?: null,
-        ]);
+// Quizタイトルだけ作成（ループの外に出す！）
+$quiz = Quiz::create([
+    'title' => $request->title,
+    'category_id' => $request->category_id ?: null,
+]);
 
+        foreach ($request->questions as $q) {
+    // 空欄選択肢を除外
+    $choices = array_values(array_filter($q['choices'], fn($c) => trim($c) !== ''));
+
+    // 選択肢が2つ未満ならバリデーションエラー
+    if(count($choices) < 2){
+        return back()->withErrors(['questions' => '各問題には2つ以上の選択肢が必要です。'])->withInput();
+    }
+        }
+        // 複数問題をまとめて作成
+        foreach ($request->questions as $q) {
+            $quiz->questions()->create([
+                'question' => $q['question'],
+                'choices' => $choices,
+                'answer' => $q['answer'],
+            ]);
+        }
         return redirect()->route('quizzes-management.index')->with('success', 'クイズを登録しました。');
     }
 
@@ -56,9 +72,14 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz)
     {
-        // choices が JSON で保存されているので配列に変換
-    $quiz->choices = json_decode($quiz->choices, true);
-
+     // $quiz に紐づく全ての questions を処理
+    foreach ($quiz->questions as $question)
+       {if (is_string($question->choices)) {
+            $question->choices = json_decode($question->choices, true);
+        }
+        // null の場合は空配列に
+        $question->choices = $question->choices ?? [];
+    }
     return view('quizzes-management.show', compact('quiz'));
     }
 
@@ -77,20 +98,33 @@ class QuizController extends Controller
     public function update(Request $request, Quiz $quiz)
     {
          $request->validate([
-            'question' => 'required|string',
-            'choices' => 'required|array|min:2',
-            'answer' => 'required|integer',
-            'title' => 'nullable|string|max:255', // ✅ 追加
+            'title' => 'required|string|max:255',
+    'category_id' => 'nullable|integer',
+    'questions' => 'required|array|min:1',
+    'questions.*.question' => 'required|string',
+    'questions.*.choices' => 'required|array|min:2',
+    'questions.*.answer' => 'required|integer',
         ]);
 
+        // Quizタイトル更新
         $quiz->update([
-            'title' => $request->title, // ✅ 追加
-            'question' => $request->question,
-            'choices' => $request->choices,
-            'answer' => $request->answer,
-            'category_id' => $request->category_id ?: null, // 追加
+            'title' => $request->title,
+            'category_id' => $request->category_id ?: null,
         ]);
 
+        // 既存問題を全削除して新しい問題で上書き（簡単なやり方）
+        $quiz->questions()->delete();
+        foreach ($request->questions as $q) {
+    $choices = array_values(array_filter($q['choices'], fn($c) => trim($c) !== ''));
+    if(count($choices) < 2){
+        return back()->withErrors(['questions' => '各問題には2つ以上の選択肢が必要です。'])->withInput();
+    }
+            $quiz->questions()->create([
+                'question' => $q['question'],
+                'choices' => $q['choices'],
+                'answer' => $q['answer'],
+            ]);
+        }
         return redirect()->route('quizzes-management.index')->with('success', 'クイズを更新しました。');
     }
 

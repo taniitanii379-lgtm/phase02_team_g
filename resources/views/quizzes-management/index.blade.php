@@ -20,7 +20,7 @@
                 <table class="w-full border border-gray-300 table-auto">
                     <thead>
                         <tr class="bg-gray-100">
-                            <th class="border px-4 py-2">クイズ名（タイトル）</th>
+                            <th class="border px-4 py-2">クイズ名</th>
                             <th class="border px-4 py-2">カテゴリ</th>
                             <th class="border px-4 py-2">問題文</th>
                             <th class="border px-4 py-2">選択肢</th>
@@ -30,53 +30,55 @@
                     </thead>
                     <tbody>
                         @forelse ($quizzes as $quiz)
-                            <tr>
-                                {{-- クイズ名 --}}
-                                <td class="border px-4 py-2">{{ $quiz->title }}</td>
+                            @foreach($quiz->questions as $questionIndex => $question)
+                                <tr>
+                                    {{-- クイズ名（最初の問題だけ表示） --}}
+                                    @if($questionIndex === 0)
+                                        <td class="border px-4 py-2" rowspan="{{ $quiz->questions->count() }}">
+                                            {{ $quiz->title }}
+                                        </td>
+                                        <td class="border px-4 py-2" rowspan="{{ $quiz->questions->count() }}">
+                                            {{ $quiz->category->name ?? '未分類' }}
+                                        </td>
+                                    @endif
 
-                                {{-- カテゴリ --}}
-                                <td class="border px-4 py-2">
-                                    {{ $quiz->category->name ?? '未分類' }}
-                                </td>
+                                    {{-- 問題文 --}}
+                                    <td class="border px-4 py-2">{{ $question->question }}</td>
 
-                                {{-- 問題文 --}}
-                                <td class="border px-4 py-2">{{ $quiz->question }}</td>
-
-                                {{-- 選択肢 --}}
-                                <td class="border px-4 py-2">
-                                    <ul class="list-disc pl-5">
-                                        @if (is_array($quiz->choices))
-                                            @foreach ($quiz->choices as $index => $choice)
-                                                <li @if($index == $quiz->answer) class="font-bold" @endif>
+                                    {{-- 選択肢 --}}
+                                    <td class="border px-4 py-2">
+                                        <ul class="list-disc pl-5">
+                                            @foreach ($question->choices ?? [] as $i => $choice)
+                                            @if(trim($choice) !== '') {{-- 空白の選択肢は無視 --}}
+                                                <li @if($i == $question->answer) class="font-bold text-green-600" @endif>
                                                     {{ $choice }}
                                                 </li>
+                                                 @endif
                                             @endforeach
-                                        @else
-                                            <li class="text-red-500">選択肢が未設定です</li>
-                                        @endif
-                                    </ul>
-                                </td>
+                                        </ul>
+                                    </td>
 
-                                {{-- 正解 --}}
-                                <td class="border px-4 py-2">
-                                    {{ $quiz->choices[$quiz->answer] ?? '不明' }}
-                                </td>
+                                    {{-- 正解 --}}
+                                    <td class="border px-4 py-2">
+                                        {{ $question->choices[$question->answer] ?? '不明' }}
+                                    </td>
 
-                                {{-- 操作 --}}
-                                <td class="border px-4 py-2">
-                                    <a href="{{ route('quizzes-management.edit', $quiz->id) }}" class="text-blue-500 hover:underline">
-                                        編集
-                                    </a>
-                                    |
-                                    <form action="{{ route('quizzes-management.destroy', $quiz->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="return confirm('本当に削除しますか？')" class="text-red-500 hover:underline">
-                                            削除
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
+                                    {{-- 操作（最初の問題だけ表示） --}}
+                                    @if($questionIndex === 0)
+                                        <td class="border px-4 py-2" rowspan="{{ $quiz->questions->count() }}">
+                                            <a href="{{ route('quizzes-management.show', $quiz->id) }}" class="text-blue-500 hover:underline">表示</a>
+                                            |
+                                            <a href="{{ route('quizzes-management.edit', $quiz->id) }}" class="text-blue-500 hover:underline">編集</a>
+                                            |
+                                            <form action="{{ route('quizzes-management.destroy', $quiz->id) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('本当に削除しますか？')" class="text-red-500 hover:underline">削除</button>
+                                            </form>
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center text-gray-500 py-4">
