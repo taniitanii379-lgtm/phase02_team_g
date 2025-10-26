@@ -13,10 +13,9 @@
             <!-- Left Side Text -->
             <div class="text-white max-w-2xl text-center lg:text-left mb-12 lg:mb-0">
                 <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 sm:mb-8">
-                    CREATIVE<br>
-                    <span class="text-yellow-300">INNOVATOR</span>
+                    Challenge Yourself!<br>
                 </h1>
-                <p class="text-base sm:text-lg md:text-xl mb-8 sm:mb-12">世界基準の明日を創る</p>
+                <p class="text-base sm:text-lg md:text-xl mb-8 sm:mb-12">準備はいいですか？クイズスタート！</p>
                 
                 <!-- クイズスタートボタン -->
                 <a href="{{ route('quizzes.index') }}" 
