@@ -80,7 +80,7 @@
                     @endforeach
                 </div>
 
-                <button type="button" id="add-question" class="block mb-4 px-4 py-2 bg-blue-500 text-white rounded">＋問題を追加</button>
+                <button type="button" id="add-question" class="block mb-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded border-2 border-blue-600 z-10 focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-200">＋問題を追加</button>
 
                 <div class="mt-4">
                     <button type="submit" class="block px-6 py-2 rounded text-white font-semibold bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-200">
