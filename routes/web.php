@@ -37,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('quizzes-management', QuizController::class)
         ->parameters(['quizzes-management' => 'quiz']);
     Route::patch('/quizzes/{id}/update-title', [QuizController::class, 'updateTitle'])
-        ->name('quizzes.updateTitle');
+    ->name('quizzes.updateTitle');
 });
 
 require __DIR__ . '/auth.php';
