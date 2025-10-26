@@ -21,10 +21,14 @@ class QuizTest extends TestCase
 
         $response = $this->post(route('quizzes-management.store'), [
             'title' => 'ことわざクイズ第1問',
-            'question' => '犬も歩けば…？',
-            'choices' => ['棒に当たる', '猫に小判', '猿も木から落ちる'],
-            'answer' => 0,
             'category_id' => $category->id,
+            'questions' => [
+                [
+                    'question' => '犬も歩けば…？',
+                    'choices' => ['棒に当たる', '猫に小判', '猿も木から落ちる'],
+                    'answer' => 0,
+                ],
+            ],
         ]);
 
         // リダイレクト確認
@@ -33,13 +37,13 @@ class QuizTest extends TestCase
         // DB に保存されたか確認
         $this->assertDatabaseHas('quizzes', [
             'title' => 'ことわざクイズ第1問',
-            'question' => '犬も歩けば…？',
-            'answer' => 0,
             'category_id' => $category->id,
         ]);
 
         $quiz = Quiz::first();
-        $this->assertEquals(['棒に当たる', '猫に小判', '猿も木から落ちる'], $quiz->choices);
+        $this->assertEquals('犬も歩けば…？', $quiz->questions->first()->question);
+        $this->assertEquals(['棒に当たる', '猫に小判', '猿も木から落ちる'], $quiz->questions->first()->choices);
+        $this->assertEquals(0, $quiz->questions->first()->answer);
     }
 
     /** @test */
@@ -50,17 +54,13 @@ class QuizTest extends TestCase
         $response = $this->post(route('quizzes-management.store'), [
             // 空データ送信
             'title' => '',
-            'question' => '',
-            'choices' => [],
-            'answer' => '',
             'category_id' => null,
+            'questions' => [], // 空配列で questions バリデーションに引っかかる
         ]);
 
         $response->assertSessionHasErrors([
             'title',
-            'question',
-            'choices',
-            'answer',
+            'questions',
         ]);
     }
 }

@@ -56,6 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/quizzes/{id}/update-title', [QuizController::class, 'updateTitle'])
     ->name('quizzes.updateTitle');
 
+
+
+
 });
 
 require __DIR__ . '/auth.php';
