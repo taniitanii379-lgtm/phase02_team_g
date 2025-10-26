@@ -12,11 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quizzes', function (Blueprint $table) {
-            if (!Schema::hasColumn('quizzes', 'question')) {
-                $table->text('question')->after('title');
-            }
             if (!Schema::hasColumn('quizzes', 'choices')) {
-                $table->json('choices')->nullable()->after('question');
+                $table->json('choices')->nullable()->after('title');
             }
             if (!Schema::hasColumn('quizzes', 'answer')) {
                 $table->integer('answer')->nullable()->after('choices');
@@ -29,9 +26,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('quizzes', function (Blueprint $table) {
-            if (Schema::hasColumn('quizzes', 'question')) {
-                $table->dropColumn('question');
-            }
             if (Schema::hasColumn('quizzes', 'choices')) {
                 $table->dropColumn('choices');
             }
