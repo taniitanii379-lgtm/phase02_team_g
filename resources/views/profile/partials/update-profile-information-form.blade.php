@@ -71,7 +71,7 @@
                 <option value="">-- 選択してください --</option>
                 <option value="クイズ初心者です🔰 よろしくお願いします！">初心者です</option>
                 <option value="得意ジャンルを極めたいです！🔥">得意ジャンル極めたい</option>
-                <option value="全国ランキング上位を目指してます！🏆">ランキング上位目指す</option>
+                <option value="高得点を目指してます！🏆">高得点を目指す</option>
             </select>
         </div>
 
